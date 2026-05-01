@@ -1,12 +1,12 @@
 <html>
 <head>
-    <title>La Pasta Bella</title>
-    <link rel="stylesheet" href="index.css">
+<title>La Pasta Bella</title>
+<link rel="stylesheet" href="index.css">
 </head>
 <body>
 <nav class="navbar fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">💖 La Pasta Bella</a>
+        <a class="navbar-brand" href="#">La Pasta Bella</a>
         <div>
             <a class="nav-link text-dark" href="#home">Home</a>
             <a class="nav-link text-dark" href="#menu">Menu</a>
@@ -19,59 +19,70 @@
             <a class="nav-link text-dark" href="#special">Special</a>
             <a class="nav-link text-dark" href="#why">Why Us</a>
             <a class="nav-link text-dark" href="#contact">Contact</a>
+            <a class="nav-link text-dark" href="#api">Recipe Finder</a>
+            <a class="nav-link text-dark" href="#cart">Cart</a>
+            <a class="nav-link text-dark" href="#newsletter">Updates</a>
         </div>
     </div>
 </nav>
 <section id="home" class="hero">
     <div class="hero-box">
-        <h1>Good Food 💕 Great Vibes</h1>
-        <p>Welcome to our aesthetic pink café ☕✨</p>
-        <a href="#menu" class="btn btn-custom">Explore Menu</a>
+    <h1>Good Food  Great Vibes</h1>
+    <p>Welcome to our aesthetic pink café </p>
+    <a href="#menu" class="btn btn-custom">Explore Menu</a>
     </div>
 </section>
+<input type="text" id="search" placeholder="Search food..." onkeyup="filterMenu()">
 <section id="menu">
 <div class="grid">
   <div class="card">
-    <h3>🍕 Pizza</h3>
+    <h3>Pizza</h3>
     <p>Margherita – ₹220</p>
     <p>Paneer Pizza – ₹260</p>
     <p>Farmhouse Pizza – ₹270</p>
+    <button type="button" onclick="orderItem('Pizza',220)">Order Now</button>
   </div>
   <div class="card">
-    <h3>🍝 Pasta</h3>
+    <h3>Pasta</h3>
     <p>White Sauce Pasta – ₹230</p>
     <p>Pink Sauce Pasta – ₹240</p>
     <p>Red Sauce Pasta – ₹220</p>
+    <button type="button" onclick="orderItem('Pasta',230)">Order Now</button>
   </div>
   <div class="card">
-    <h3>🍔 Snacks</h3>
+    <h3>Snacks</h3>
     <p>Veg Burger – ₹170</p>
     <p>Cheese Sandwich – ₹150</p>
     <p>Veg Wrap – ₹150</p>
+    <button type="button" onclick="orderItem('Veg Burger',170)">Order Now</button>
   </div>
   <div class="card">
-    <h3>🍟 Sides</h3>
+    <h3>Sides</h3>
     <p>French Fries – ₹100</p>
     <p>Masala Fries – ₹120</p>
     <p>Garlic Bread – ₹140</p>
+    <button type="button" onclick="orderItem('Garlic Bread',140)">Order Now</button>
   </div>
   <div class="card">
-    <h3>☕ Beverages</h3>
+    <h3>Beverages</h3>
     <p>Coffee – ₹120</p>
     <p>Cappuccino – ₹150</p>
     <p>Cold Drink – ₹90</p>
+    <button type="button" onclick="orderItem('Cold Drink',90)">Order Now</button>
   </div>
   <div class="card">
-    <h3>🥤 Shakes</h3>
+    <h3>Shakes</h3>
     <p>Strawberry Shake – ₹190</p>
     <p>Chocolate Milkshake – ₹200</p>
     <p>Cold Coffee – ₹140</p>
+    <button type="button" onclick="orderItem('Cold Coffee',140)">Order Now</button>
   </div>
   <div class="card">
-    <h3>🍰 Desserts</h3>
+    <h3>Desserts</h3>
     <p>Chocolate Brownie – ₹180</p>
     <p>Ice Cream – ₹120</p>
     <p>Chocolate Cake – ₹210</p>
+    <button type="button" onclick="orderItem('Chocolate Cake',210)">Order Now</button>
   </div>
 </div>
 </section>
@@ -196,8 +207,118 @@
 </div>
 </section>
 </section>
+<section id="api">
+  <h2>Recipe Finder</h2>
+  <div class="newsletter-box">
+    <input type="text" id="foodInput" placeholder="Search food like pasta">
+    <button type="button" class="btn-custom" onclick="searchFood()">Search</button>
+    <div id="result"></div>
+  </div>
+</section>
+<section id="cart">
+  <h2>Your Order</h2>
+  <div class="cart-box">
+    <p id="cartItems">No items added yet.</p>
+    <p><b>Total:</b> ₹<span id="total">0</span></p>
+    <button type="button" class="btn-custom" onclick="checkout()">Checkout</button>
+  </div>
+</section>
+<div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+  <div style="background:white; width:40%; margin:100px auto; padding:20px; border-radius:20px; text-align:center;">
+    <h2>Order Summary</h2>
+    <p id="popupItems"></p>
+    <p><b>Total: ₹<span id="popupTotal"></span></b></p>
+    <button class="btn-custom" onclick="closePopup()">Close</button>
+  </div>
+</div>
+<section id="newsletter">
+  <h2>Stay Updated</h2>
+  <div class="newsletter-box">
+    <p>Subscribe to get offers and new menu updates.</p>
+    <input type="email" id="email" placeholder="Enter your email">
+    <button type="button" class="btn-custom" onclick="subscribe()">Subscribe</button>
+  </div>
+</section>
 <footer>
-    <p>© 2026 La Pasta Bella 💖 by Prachi Bajoria</p>
+    <p>@ 2026 La Pasta Bella by Prachi Bajoria</p>
 </footer>
+<script>
+let cart = [];
+let total = 0;
+function orderItem(itemName, price) {
+  cart.push({name: itemName, price: price});
+  total += price;
+  updateCart();
+}
+function updateCart() {
+  let text = "";
+  cart.forEach((item, index) => {
+    text += item.name + " ₹" + item.price +
+    ` <button type="button" onclick="removeItem(${index})">❌</button><br>`;
+  });
+  document.getElementById("cartItems").innerHTML = text;
+  document.getElementById("total").innerHTML = total;
+}
+function removeItem(index) {
+  total -= cart[index].price;
+  cart.splice(index, 1);
+  updateCart();
+}
+function filterMenu() {
+  let input = document.getElementById("search").value.toLowerCase();
+  let cards = document.querySelectorAll("#menu .card");
+  cards.forEach(card => {
+    let text = card.innerText.toLowerCase();
+    card.style.display = text.includes(input) ? "initial" : "none";
+  });
+}
+function checkout() {
+  if (cart.length == 0) {
+    alert("Your cart is empty.");
+  } else {
+    document.getElementById("popup").style.display = "block";
+    let items = cart.map(item => item.name + " ₹" + item.price).join("<br>");
+    document.getElementById("popupItems").innerHTML = items;
+    document.getElementById("popupTotal").innerHTML = total;
+  }
+}
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+function subscribe() {
+  let email = document.getElementById("email").value;
+
+  if (email == "") {
+    alert("Please enter your email.");
+  } else {
+    alert("Thank you for subscribing!");
+  }
+}
+function searchFood() {
+  let foodName = document.getElementById("foodInput").value;
+  let result = document.getElementById("result");
+
+  if (foodName == "") {
+    result.innerHTML = "<p>Please enter a food name.</p>";
+    return;
+  }
+  result.innerHTML = "<p>🔄 Loading recipe...</p>";
+  fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=" + foodName)
+    .then(res => res.json())
+    .then(data => {
+      if (data.meals == null) {
+        result.innerHTML = "<p>No recipe found.</p>";
+      } else {
+        let meal = data.meals[0];
+        result.innerHTML = `
+        <h3>${meal.strMeal}</h3>
+        <img src="${meal.strMealThumb}" style="width:250px; border-radius:15px; margin:15px;">
+        <p>${meal.strInstructions.substring(0,200)}...</p>
+        <a href="${meal.strYoutube}" target="_blank">▶ Watch Video</a>
+        `;
+      }
+    });
+}
+</script>
 </body>
 </html>
